@@ -37,6 +37,22 @@ contract('ABC', accounts => {
     assert.equal(price, 150)
   })
 
+  it('anyone is able to buy apple', async function() {
+    let q = 10
+    await abc.register(10, 2, {from: account1})
+    await abc.buyUSDToken(100, {from: account1})
+    balanceBefore = await abc.getShopperBalance(account1)
+    console.log(balanceBefore)
+    await abc.buyGoods(web3.utils.asciiToHex("apple"), q, {from: account1})
+    balanceAfter = await abc.getShopperBalance(account1)
+    console.log(balanceAfter)
+    price = await abc.getGoodsPrice(web3.utils.asciiToHex("apple"))
+    spending = price * q / 100;
+    console.log(spending)
+    assert.notEqual(spending, 0)
+    assert.equal(balanceBefore, +balanceAfter + +spending)
+  })
+
   it('adult guy is able to buy beer', async function() {
     let q = 10
     await abc.register(25, 1, {from: account1})
@@ -76,6 +92,24 @@ contract('ABC', accounts => {
     assert.equal(status, 1)
   })
 
+  it('elite status enjoys 10% discount on all future purchases', async function() {
+    let q = 200
+    let initAmt = 2000
+    await abc.register(26, 2, {from: account1})
+    await abc.buyUSDToken(initAmt, {from: account1})
+    await abc.buyGoods(web3.utils.asciiToHex("beer"), q, {from: account1})
+    // second purchase after becoming elite status
+    status = await abc.getShopperStatus(account1)
+    console.log(status)
+    await abc.buyGoods(web3.utils.asciiToHex("beer"), q, {from: account1})
+    price = await abc.getGoodsPrice(web3.utils.asciiToHex("beer"))
+    spending = price * q / 100
+    balanceAfter = await abc.getShopperBalance(account1)
+    console.log(parseInt(balanceAfter,10))
+    assert.equal(balanceAfter,
+      parseInt(initAmt) - parseInt(spending) - parseInt(spending)*0.9)
+  })
+
   it('month end reward', async function() {
     let q = 100
     await abc.register(30, 2, {from: account1})
@@ -85,11 +119,7 @@ contract('ABC', accounts => {
     spending = price * q / 100;
     await abc.monthEndReward(account1, {from: account0})
     tokenBalance = await abc.getShopperABCToken(account1)
-    assert.equal(spending, 0)
+    assert.equal(spending, tokenBalance)
   })
 
-  it('is able to get key', async function() {
-    item = await abc.getItem(web3.utils.asciiToHex("test"))
-    assert.equal(item, 2)
-  })
 })

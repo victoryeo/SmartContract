@@ -27,26 +27,37 @@ contract ABC {
   uint yearRecord;
   uint monthRecord;
 
-  mapping(bytes32 => uint) items;
-
   modifier onlyOwner() {
     require(msg.sender == owner, "must be owner");
     _;
   }
 
   constructor() public {
+    bytes32 placeholder;
     owner = msg.sender;
-    //this does not work, needs to convert string to bytes
-    //addGoods("beer", 150, 0, 0, 0);
+
     goods["beer"].price = 300;
     goods["beer"].ageLimit = 21;
     goods["skirt"].price = 500;
     goods["skirt"].genderLimit = 2;
-    goods["apple"].price = 150;
+
+    //this does not work, needs to convert string to bytes
+    //addGoods("apple", 150, 0, 0, 0);
+    placeholder = stringToBytes32("apple");
+    addGoods(placeholder, 150, 0, 0, 0);
+    //goods["apple"].price = 150;
 
     (yearRecord, monthRecord) = DateTimeLib.getMonthYear(now);
+  }
 
-    items["test"] = 2;
+  function stringToBytes32(string memory source) public returns (bytes32 result) {
+    bytes memory temp = bytes(source);
+    if (temp.length == 0) {
+      return 0x0;
+    }
+    assembly {
+      result := mload(add(source, 32))
+    }
   }
 
   function register(uint _age, uint _gender) public  {
@@ -134,7 +145,4 @@ contract ABC {
     return shopper[_shopperAddr].ABCtoken;
   }
 
-  function getItem(bytes32 key) public view returns (uint) {
-    return items[key];
-  }
 }
