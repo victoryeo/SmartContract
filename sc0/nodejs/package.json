@@ -1,0 +1,17 @@
+{
+  "name": "nodeks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ganache-cli": "^6.9.1",
+    "path": "^0.12.7",
+    "truffle-contract": "^4.0.31",
+    "web3": "^1.2.7"
+  }
+}
