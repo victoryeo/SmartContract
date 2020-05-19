@@ -11,25 +11,50 @@ const web3 = new Web3()
 web3.setProvider(provider)
 
 let accounts
-getAccount = async () => {
+
+getAccount = async() => {
   accounts = await web3.eth.getAccounts();
   console.log(accounts)
 }
 
-getAccount()
+transferEth = async() => {
+  await web3.eth.sendTransaction({
+    from: accounts[1],
+    to: accounts[0],
+    value:  web3.utils.toWei("1", "ether"),
+    gas: 4600000
+  }).then(function(err, txHash) {
+          if (!err)
+                console.log("txHash " + txHash)
+          else
+                console.log(err)
+  })
+}
 
-getBalance = async (instance) => {
-  let bal0 = await instance.getBalance(accounts[0])
-  let bal1 = await instance.getBalance(accounts[1])
+getEthBalance = async() => {
+  let bal0 = await web3.eth.getBalance(accounts[0])
+  let bal1 = await web3.eth.getBalance(accounts[1])
   console.log(bal0)
   console.log(bal1)
 }
 
+getCoinBalance = async(instance) => {
+  let user = 0
+  let bal0 = await instance.getBalance(accounts[user])
+  console.log("account %d %s", user, bal0)
+}
+
+getAccount()
+
 fix_account = "0x8279F5648427919CEdb0fc413E9eFE34ff6D2baf"
+
 masterContract.deployed().then(function(instance) {
-  console.log(instance.address)
+  console.log("address " + instance.address)
   instance.sendCoin(accounts[1], 10, {from: accounts[0]})
-  getBalance(instance)
+  getCoinBalance(instance)
+
+  transferEth()
+  getEthBalance()
 }).then(function(result) {
   console.log("result " + result)
 })
