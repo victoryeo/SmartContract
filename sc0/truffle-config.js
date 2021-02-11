@@ -16,6 +16,15 @@ module.exports = {
   //    port: 7545,
   //    network_id: "*"
   //  }
+    quorum: {
+      host: "127.0.0.1",
+      port: 22000,
+      network_id: "*",
+      type: "quorum",
+      gasPrice: 0,
+      gas: 4500000
+    },
+
   }
   
 };
