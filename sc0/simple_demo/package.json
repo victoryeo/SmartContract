@@ -10,6 +10,8 @@
   "description": "",
   "dependencies": {
     "ganache-cli": "^6.9.1",
+    "ipfs": "^0.54.2",
+    "ipfs-http-client": "^49.0.2",
     "path": "^0.12.7",
     "truffle-contract": "^4.0.31",
     "web3": "^1.2.7"
